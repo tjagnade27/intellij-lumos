@@ -1,0 +1,26 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# macOS
+.DS_Store
+
+# Build artifacts
+*.zip
+*.jar
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~

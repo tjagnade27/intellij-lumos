@@ -1,0 +1,52 @@
+<idea-plugin>
+    <id>com.lumos.intellij</id>
+    <name>LUMOS</name>
+    <vendor email="rz1989s@gmail.com" url="https://lumos-lang.org">LUMOS Language</vendor>
+
+    <!-- Product and plugin compatibility requirements -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.redhat.devtools.lsp4ij</depends>
+
+    <resource-bundle>messages.LumosBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- File type registration -->
+        <fileType
+            name="LUMOS"
+            implementationClass="com.lumos.LumosFileType"
+            fieldName="INSTANCE"
+            language="LUMOS"
+            extensions="lumos"/>
+
+        <!-- Language registration -->
+        <lang.parserDefinition
+            language="LUMOS"
+            implementationClass="com.lumos.LumosParserDefinition"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.redhat.devtools.lsp4ij">
+        <!-- LSP server support provider -->
+        <server
+            id="lumosLanguageServer"
+            name="LUMOS Language Server"
+            factoryClass="com.lumos.LumosLspServerSupportProvider">
+            <description>
+                <![CDATA[
+                LUMOS Language Server provides:
+                <ul>
+                  <li>Syntax validation and error detection</li>
+                  <li>Auto-completion for types and attributes</li>
+                  <li>Hover documentation</li>
+                  <li>Code formatting</li>
+                </ul>
+                ]]>
+            </description>
+        </server>
+    </extensions>
+
+    <projectListeners>
+        <listener
+            class="com.lumos.LumosLspServerSupportProvider"
+            topic="com.intellij.platform.lsp.api.LspServerSupportProvider"/>
+    </projectListeners>
+</idea-plugin>
