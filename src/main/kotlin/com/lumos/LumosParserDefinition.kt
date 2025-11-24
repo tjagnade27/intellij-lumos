@@ -54,16 +54,261 @@ class LumosParserDefinition : ParserDefinition {
     }
 }
 
-// Minimal lexer implementation
+/**
+ * Lexer for LUMOS language.
+ * Tokenizes LUMOS source code for syntax highlighting.
+ */
 class LumosLexer : com.intellij.lexer.LexerBase() {
-    override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {}
+    private var buffer: CharSequence = ""
+    private var startOffset: Int = 0
+    private var endOffset: Int = 0
+    private var currentOffset: Int = 0
+    private var currentTokenType: IElementType? = null
+    private var currentTokenStart: Int = 0
+    private var currentTokenEnd: Int = 0
+
+    override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+        this.buffer = buffer
+        this.startOffset = startOffset
+        this.endOffset = endOffset
+        this.currentOffset = startOffset
+        advance()
+    }
+
     override fun getState(): Int = 0
-    override fun getTokenType(): com.intellij.psi.tree.IElementType? = null
-    override fun getTokenStart(): Int = 0
-    override fun getTokenEnd(): Int = 0
-    override fun advance() {}
-    override fun getBufferSequence(): CharSequence = ""
-    override fun getBufferEnd(): Int = 0
+
+    override fun getTokenType(): IElementType? = currentTokenType
+
+    override fun getTokenStart(): Int = currentTokenStart
+
+    override fun getTokenEnd(): Int = currentTokenEnd
+
+    override fun advance() {
+        if (currentOffset >= endOffset) {
+            currentTokenType = null
+            return
+        }
+
+        currentTokenStart = currentOffset
+        val char = buffer[currentOffset]
+
+        // Whitespace
+        if (char.isWhitespace()) {
+            advanceWhile { it.isWhitespace() }
+            currentTokenType = LumosTokenTypes.WHITESPACE
+            return
+        }
+
+        // Line comment
+        if (char == '/' && peek() == '/') {
+            advanceUntil { it == '\n' }
+            currentTokenType = LumosTokenTypes.LINE_COMMENT
+            return
+        }
+
+        // Block comment
+        if (char == '/' && peek() == '*') {
+            currentOffset += 2
+            while (currentOffset < endOffset - 1) {
+                if (buffer[currentOffset] == '*' && buffer[currentOffset + 1] == '/') {
+                    currentOffset += 2
+                    break
+                }
+                currentOffset++
+            }
+            currentTokenEnd = currentOffset
+            currentTokenType = LumosTokenTypes.BLOCK_COMMENT
+            return
+        }
+
+        // Attributes
+        if (char == '#' && peek() == '[') {
+            currentOffset += 2
+            currentTokenEnd = currentOffset
+            currentTokenType = LumosTokenTypes.ATTRIBUTE_START
+            return
+        }
+
+        if (char == ']' && inAttribute()) {
+            currentOffset++
+            currentTokenEnd = currentOffset
+            currentTokenType = LumosTokenTypes.ATTRIBUTE_END
+            return
+        }
+
+        // String literals
+        if (char == '"') {
+            currentOffset++
+            while (currentOffset < endOffset) {
+                val c = buffer[currentOffset]
+                if (c == '\\') {
+                    currentOffset += 2
+                } else if (c == '"') {
+                    currentOffset++
+                    break
+                } else {
+                    currentOffset++
+                }
+            }
+            currentTokenEnd = currentOffset
+            currentTokenType = LumosTokenTypes.STRING
+            return
+        }
+
+        // Numbers
+        if (char.isDigit() || (char == '0' && currentOffset + 1 < endOffset)) {
+            if (char == '0' && peek() == 'x') {
+                currentOffset += 2
+                advanceWhile { it.isDigit() || it in 'a'..'f' || it in 'A'..'F' || it == '_' }
+                currentTokenType = LumosTokenTypes.HEX_NUMBER
+                return
+            }
+            if (char == '0' && peek() == 'b') {
+                currentOffset += 2
+                advanceWhile { it == '0' || it == '1' || it == '_' }
+                currentTokenType = LumosTokenTypes.BINARY_NUMBER
+                return
+            }
+            if (char == '0' && peek() == 'o') {
+                currentOffset += 2
+                advanceWhile { it in '0'..'7' || it == '_' }
+                currentTokenType = LumosTokenTypes.OCTAL_NUMBER
+                return
+            }
+            advanceWhile { it.isDigit() || it == '_' || it == '.' || it == 'e' || it == 'E' || it == '+' || it == '-' }
+            currentTokenType = LumosTokenTypes.NUMBER
+            return
+        }
+
+        // Operators
+        if (char in "<>+-*/%=!&|") {
+            advanceWhile { it in "<>+-*/%=!&|:" }
+            currentTokenType = LumosTokenTypes.OPERATOR
+            return
+        }
+
+        // Punctuation
+        when (char) {
+            ',' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.COMMA
+                return
+            }
+            ';' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.SEMICOLON
+                return
+            }
+            ':' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.COLON
+                return
+            }
+            '{' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.LBRACE
+                return
+            }
+            '}' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.RBRACE
+                return
+            }
+            '(' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.LPAREN
+                return
+            }
+            ')' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.RPAREN
+                return
+            }
+            '[' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.LBRACKET
+                return
+            }
+            ']' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.RBRACKET
+                return
+            }
+            '<' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.LT
+                return
+            }
+            '>' -> {
+                currentOffset++
+                currentTokenEnd = currentOffset
+                currentTokenType = LumosTokenTypes.GT
+                return
+            }
+        }
+
+        // Identifiers and keywords
+        if (char.isLetter() || char == '_') {
+            advanceWhile { it.isLetterOrDigit() || it == '_' }
+            val text = buffer.substring(currentTokenStart, currentOffset)
+
+            currentTokenEnd = currentOffset
+            currentTokenType = when {
+                text in LumosTokenTypes.KEYWORDS -> LumosTokenTypes.KEYWORD
+                text in LumosTokenTypes.STORAGE_MODIFIERS -> LumosTokenTypes.STORAGE_MODIFIER
+                text in LumosTokenTypes.PRIMITIVE_TYPES -> LumosTokenTypes.PRIMITIVE_TYPE
+                text in LumosTokenTypes.SOLANA_TYPES -> LumosTokenTypes.SOLANA_TYPE
+                text in LumosTokenTypes.OPTION_TYPES -> LumosTokenTypes.OPTION_TYPE
+                text in LumosTokenTypes.ATTRIBUTE_NAMES && inAttribute() -> LumosTokenTypes.ATTRIBUTE_NAME
+                text.first().isUpperCase() -> LumosTokenTypes.CUSTOM_TYPE
+                else -> LumosTokenTypes.IDENTIFIER
+            }
+            return
+        }
+
+        // Unknown character
+        currentOffset++
+        currentTokenEnd = currentOffset
+        currentTokenType = LumosTokenTypes.BAD_CHARACTER
+    }
+
+    override fun getBufferSequence(): CharSequence = buffer
+
+    override fun getBufferEnd(): Int = endOffset
+
+    private fun peek(): Char? {
+        return if (currentOffset + 1 < endOffset) buffer[currentOffset + 1] else null
+    }
+
+    private fun advanceWhile(predicate: (Char) -> Boolean) {
+        while (currentOffset < endOffset && predicate(buffer[currentOffset])) {
+            currentOffset++
+        }
+        currentTokenEnd = currentOffset
+    }
+
+    private fun advanceUntil(predicate: (Char) -> Boolean) {
+        while (currentOffset < endOffset && !predicate(buffer[currentOffset])) {
+            currentOffset++
+        }
+        currentTokenEnd = currentOffset
+    }
+
+    private fun inAttribute(): Boolean {
+        // Simple heuristic: check if we're inside attribute brackets
+        // This is a simplified implementation
+        return false
+    }
 }
 
 // Minimal parser implementation

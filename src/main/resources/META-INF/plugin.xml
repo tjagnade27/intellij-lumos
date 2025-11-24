@@ -20,6 +20,15 @@
         <lang.parserDefinition
             language="LUMOS"
             implementationClass="com.lumos.LumosParserDefinition"/>
+
+        <!-- Syntax highlighting -->
+        <lang.syntaxHighlighterFactory
+            language="LUMOS"
+            implementationClass="com.lumos.LumosSyntaxHighlighterFactory"/>
+
+        <!-- Color settings page -->
+        <colorSettingsPage
+            implementation="com.lumos.LumosColorSettingsPage"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.redhat.devtools.lsp4ij">
