@@ -5,5 +5,5 @@ import javax.swing.Icon
 
 object LumosIcons {
     @JvmField
-    val FILE: Icon = IconLoader.getIcon("/icons/lumos.svg", LumosIcons::class.java)
+    val FILE: Icon = IconLoader.getIcon("/icons/lumos.png", LumosIcons::class.java)
 }
